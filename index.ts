@@ -12,7 +12,7 @@ async function ai(question: string) {
       {
         role: "user",
         content: `Answer the question in concise and short manner
-    Question: ${question.split(".").join("")}?`,
+    Question: ${question.split(".").join(" ")}?`,
       },
     ],
     model: "llama3.1-8b",
@@ -22,26 +22,39 @@ async function ai(question: string) {
 
 startUdpServer(
   async (query) => {
-    const target = "127.0.0.1";
     if (!query.questions) {
       return createResponse(query, []);
     }
+    const question = query.questions[0].name;
 
     try {
-      console.log("Received query:", query);
-      const question = query.questions[0].name;
-      console.log("Question:", question);
       const answer = await ai(question);
-      console.log("Answer:", answer);
-      return createResponse(query, [createTxtAnswer(answer, target)]);
+      console.log({ question, answer });
+
+      return createResponse(query, [
+        createTxtAnswer(
+          {
+            name: question,
+            type: "TXT",
+          },
+          answer
+        ),
+      ]);
     } catch (error) {
       console.error("Error handling query:", error);
       return createResponse(query, [
-        createTxtAnswer(query.questions[0], target),
+        createTxtAnswer(
+          {
+            name: question,
+            type: "TXT",
+          },
+          "OOps! Something went wrong"
+        ),
       ]);
     }
   },
   {
     port: 8000,
+    address: "127.0.0.1",
   }
 );
