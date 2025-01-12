@@ -2,6 +2,7 @@ import Cerebras from "@cerebras/cerebras_cloud_sdk";
 import { startUdpServer, createResponse, createTxtAnswer } from "denamed";
 import * as json from "json5";
 import axios from "axios";
+import * as os from "os";
 
 const WEATHER_API_KEY = process.env["WEATHER_API"];
 type ChatCompletionResponse = {
@@ -49,7 +50,8 @@ const tools = [
     type: "function",
     function: {
       name: "calculate",
-      description: "A calculator tool that can perform basic arithmetic operations.",
+      description:
+        "A calculator tool that can perform basic arithmetic operations.",
       parameters: {
         type: "object",
         properties: {
@@ -66,17 +68,7 @@ const tools = [
     type: "function",
     function: {
       name: "getTime",
-      description: "Get current time in a specific timezone",
-      parameters: {
-        type: "object",
-        properties: {
-          timezone: {
-            type: "string",
-            description: "Timezone name (e.g., 'UTC', 'America/New_York')",
-          },
-        },
-        required: ["timezone"],
-      },
+      description: "Get current time in a your timezone",
     },
   },
   {
@@ -97,23 +89,26 @@ const tools = [
     },
   },
 ];
-function getTime(timezone: string) {
-  try {
-    return new Date().toLocaleString("en-US", { timeZone: timezone });
-  } catch (error) {
-    return "Error: Invalid timezone";
-  }
+function getTime() {
+  return new Date().toLocaleTimeString("en", {
+    timeZone: "Asia/Kolkata",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
 }
 
-async function getWeather(location: string) {
+async function getWeather(location: string): Promise<string> {
   try {
     const response = await axios.get(
-      `http://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(location)}`
+      `http://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(
+        location
+      )}`
     );
     const data = response.data;
     return `${data.current.temp_c}°C, ${data.current.condition.text} in ${data.location.name}, ${data.location.country}`;
   } catch (error) {
-    return "Error: Could not fetch weather data";
+    return "Error Could not fetch weather data";
   }
 }
 function calculate(expression: string) {
@@ -161,8 +156,7 @@ async function ai(question: string) {
         result = calculate(calcArgs.expression);
         break;
       case "getTime":
-        const timeArgs = json.parse(function_call.arguments);
-        result = getTime(timeArgs.timezone);
+        result = getTime();
         break;
       case "getWeather":
         const weatherArgs = json.parse(function_call.arguments);
@@ -180,7 +174,7 @@ async function ai(question: string) {
 
     // @ts-expect-error
     response = await client.chat.completions.create({
-      model: "llama3.1-8b",
+      model: "llama-3.3-70b",
       messages,
     });
 
@@ -211,7 +205,7 @@ startUdpServer(
             name: question,
             type: "TXT",
           },
-          answer || "OOps! Something went wrong"
+          answer.replace("°", " degree ") || "OOps! Something went wrong"
         ),
       ]);
     } catch (error) {
