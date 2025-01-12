@@ -2,13 +2,13 @@
 
 A smart DNS server leveraging state-of-the-art AI technology.
 
-![ss](shot.jpeg)
+![terminal](shot.jpeg)
 
 ## 🚀 Tech Stack
 
 - 🎯 **Bun** - Modern JavaScript runtime and package manager
 - 📝 **TypeScript** - Enhanced code quality with static typing
-- 🧠 **Llama 3.1** - Ultra-fast AI model (staggering speed of 2.2k tokens/sec) via Cerebras Inference
+- 🧠 **Llama 3.1** - Ultra-fast AI model (staggering speed of ~2200k tokens/sec) via Cerebras Inference
 - 🔄 **Denamed** - Robust DNS server implementation
 
 ## 🛠️ Setup & Installation
