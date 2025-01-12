@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@cerebras/cerebras_cloud_sdk": "^1.16.0",
+    "axios": "^1.7.9",
     "denamed": "^2.0.4",
     "json5": "^2.2.3"
   }
