@@ -4,6 +4,14 @@ A smart DNS server leveraging state-of-the-art AI technology.
 
 ![terminal](shot.jpeg)
 
+### Can even do Tool Calling with AI 🤯
+
+![terminalWithToolCalling](shot2.jpeg)
+
+- Doing simple math calculations with perfect reasoning
+- Getting the current weather with the location based on its reasoning
+- Getting the current time with the correct timezone
+
 ## 🚀 Tech Stack
 
 - 🎯 **Bun** - Modern JavaScript runtime and package manager
