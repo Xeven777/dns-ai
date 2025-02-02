@@ -2,7 +2,7 @@ import Cerebras from "@cerebras/cerebras_cloud_sdk";
 import { startUdpServer, createResponse, createTxtAnswer } from "denamed";
 import * as json from "json5";
 import axios from "axios";
-import * as os from "os";
+import type { ChatCompletion } from "@cerebras/cerebras_cloud_sdk/resources/index.mjs";
 
 const WEATHER_API_KEY = process.env["WEATHER_API"];
 type ChatCompletionResponse = {
@@ -89,6 +89,7 @@ const tools = [
     },
   },
 ];
+
 function getTime() {
   return new Date().toLocaleTimeString("en", {
     timeZone: "Asia/Kolkata",
@@ -137,14 +138,13 @@ async function ai(question: string) {
     },
   ];
 
-  // @ts-expect-error
-  let response: ChatCompletionResponse = await client.chat.completions.create({
+  let response: ChatCompletion = await client.chat.completions.create({
     messages: messages,
     tools,
-    model: "llama3.1-8b",
+    model: "llama-3.3-70b",
   });
 
-  let choice = response.choices[0].message;
+  let choice = (response.choices as Array<any>)[0].message;
 
   if (choice.tool_calls) {
     const function_call = choice.tool_calls[0].function;
@@ -172,19 +172,18 @@ async function ai(question: string) {
       tool_call_id: choice.tool_calls[0].id,
     });
 
-    // @ts-expect-error
     response = await client.chat.completions.create({
       model: "llama-3.3-70b",
       messages,
     });
 
     if (response) {
-      return response.choices[0].message.content;
+      return (response.choices as Array<any>)[0].message.content;
     } else {
       return "Error: No final response received";
     }
   } else {
-    return response.choices[0].message.content;
+    return (response.choices as Array<any>)[0].message.content;
   }
 }
 
