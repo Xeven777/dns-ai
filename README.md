@@ -7,7 +7,7 @@ A smart DNS server leveraging state-of-the-art AI technology.
 ### Can even do Tool Calling with AI 🤯
 
 ![terminalWithToolCalling](shot2.jpeg)
-
+Video Demo link : https://www.youtube.com/watch?v=kC-xaDifOt0
 - Doing simple math calculations with perfect reasoning
 - Getting the current weather with the location based on its reasoning
 - Getting the current time with the correct timezone
